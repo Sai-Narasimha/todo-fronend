@@ -7,17 +7,15 @@ export const TodoList = ({ postRes }) => {
 
     const [open, setOpen] = React.useState(false);
 
-    const [id, setId] = React.useState('');
-    const handleOpen = () => {
+    const [id, setId] = React.useState(null);
+    const handleOpen = (todoId) => {
         setOpen(true);
-        // setId(id)
+        setId(todoId)
     };
 
     const handleClose = () => setOpen(false);
 
     const [todoList, setTodoList] = React.useState([]);
-
-    const [singleTodo, setSingleTodo] = React.useState({})
 
     const getTodoList = () => {
         const token = JSON.parse(localStorage.getItem('token'));
@@ -28,10 +26,6 @@ export const TodoList = ({ postRes }) => {
         axios.delete(`https://nanitodoapp.cyclic.app/todos/delete/${id}`, { headers: { 'Content-Type': "application/json", "Authorization": `Bearer ${token}` } }).then(() => getTodoList()).catch((error) => alert(error));
     };
 
-    const editTodo = (id) => {
-        const token = JSON.parse(localStorage.getItem('token'));
-        axios.put(`https://nanitodoapp.cyclic.app/todos/update/${id}`, { headers: { 'Content-Type': "application/json", "Authorization": `Bearer ${token}` } }).then(() => getTodoList()).catch((error) => alert(error));
-    }
 
     React.useEffect(() => {
         getTodoList();
@@ -88,7 +82,7 @@ export const TodoList = ({ postRes }) => {
                     </tr>
                 </tbody>
             </table>
-            <EditModal modalOpen={open} handleClose={handleClose} />
+            <EditModal modalOpen={open} handleClose={handleClose} todoId={id} />
         </div>
     )
 }

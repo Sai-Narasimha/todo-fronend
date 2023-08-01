@@ -2,18 +2,23 @@ import { Box, Button, Modal, TextField } from '@mui/material'
 import axios from 'axios';
 import React from 'react'
 
-export const EditModal = ({ modalOpen, handleClose, todoId  }) => {
-    console.log("ididid")
+export const EditModal = ({ modalOpen, handleClose, todoId }) => {
+    console.log(todoId, "ididid")
     const [singleTodo, setSingleTodo] = React.useState({
         title: "",
         description: "",
-        completed: false
     });
 
     const getSingleTodo = () => {
         const token = JSON.parse(localStorage.getItem('token'));
         axios.get(`https://nanitodoapp.cyclic.app/todos/${todoId}`, { headers: { 'Content-Type': "application/json", "Authorization": `Bearer ${token}` } }).then((res) => setSingleTodo(res.data)).catch((error) => alert(error));
     };
+    
+    const editTodo = () => {
+        const token = JSON.parse(localStorage.getItem('token'));
+        axios.patch(`https://nanitodoapp.cyclic.app/todos/update/${todoId}`,JSON.stringify(singleTodo), { headers: { 'Content-Type': "application/json", "Authorization": `Bearer ${token}` } }).then((res) => console.log(res.data)).catch((error) => alert(error));
+    }
+
     const handleTodoChange = (e) => {
         const { name, value } = e.target
         setSingleTodo({ ...singleTodo, [name]: value });
@@ -21,9 +26,9 @@ export const EditModal = ({ modalOpen, handleClose, todoId  }) => {
 
     React.useEffect(() => {
         getSingleTodo();
-    }, [])
-    
+    }, [modalOpen])
 
+    console.log(singleTodo);
     return (
         <Modal
             open={modalOpen}
@@ -38,7 +43,7 @@ export const EditModal = ({ modalOpen, handleClose, todoId  }) => {
                     <br />
                     <TextField type='text' value={singleTodo.description} placeholder='Description' style={{ padding: "5px" }} name="description" onChange={handleTodoChange} />
                     <br />
-                    <Button>Save</Button>
+                    <Button onClick={editTodo}>Save</Button>
                 </div>
             </Box>
         </Modal>
